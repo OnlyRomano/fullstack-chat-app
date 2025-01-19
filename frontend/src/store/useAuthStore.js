@@ -1,3 +1,4 @@
+
 import { create } from 'zustand'
 import { axiosInstance } from '../lib/axios.js'
 import toast from 'react-hot-toast'
@@ -12,7 +13,7 @@ export const useAuthStore = create((set, get) => ({
     isUpdatingProfile: false,
     isCheckingAuth: true,
     onlineUsers: [],
-    Socket: null,
+    socket: null,
     
     checkAuth: async () => {
         try {
@@ -85,16 +86,16 @@ export const useAuthStore = create((set, get) => ({
     connectSocket: () => {
         const { authUser } = get()
 
-        if(!authUser || get().Socket?.connected) return
+        if(!authUser || get().socket?.connected) return
 
-        const Socket = io(BASE_URL, {
+        const socket = io(BASE_URL, {
             query: {
                 userId: authUser._id
             }
         })
-        Socket.connect()
+        socket.connect()
 
-        set({ Socket: Socket})
+        set({ socket: socket})
 
         socket.on("getOnlineUsers", (userIds) => {
             set({ onlineUsers: userIds})
@@ -102,7 +103,7 @@ export const useAuthStore = create((set, get) => ({
     },
 
     disconnectSocket: () => {
-        if(get().Socket?.connected) get().socket.disconnect()
+        if(get().socket?.connected) get().socket.disconnect()
     }
 
 }))
